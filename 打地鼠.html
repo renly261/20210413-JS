@@ -40,6 +40,8 @@
   </table>
   <input type="button" value="開始遊戲" id="btn-start">
   <br>
+  還剩 <span id="text-countdown"></span> 秒
+  <br>
   目前分數: <span id="text-score"></span>
   <hr>
   最高紀錄:
@@ -53,13 +55,16 @@
     const textScore = document.getElementById('text-score')
     const textHighscorePlayer = document.getElementById('highscore-player')
     const textHighscore = document.getElementById('highscore-score')
+    const textCountdown = document.getElementById('text-countdown')
 
     let score = 0
     let timer = 0
+    let countdown = 10
 
     btnStart.onclick = () => {
       btnStart.disabled = true
       score = 0
+      countdown = 10
 
       timer = setInterval(game, 1000)
       game()
@@ -73,6 +78,11 @@
       for(let i=0;i<3;i++) {
         const random = Math.floor(Math.random()*9)
         holes[random].classList.add('red')
+      }
+      countdown--
+      textCountdown.innerText = countdown
+      if (countdown <= 0) {
+        clearInterval(timer)
       }
     }
 
