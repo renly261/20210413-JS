@@ -57,6 +57,9 @@
     const textHighscore = document.getElementById('highscore-score')
     const textCountdown = document.getElementById('text-countdown')
 
+    const audio = new Audio()
+    audio.src = './rihai.mp3'
+
     let score = 0
     let timer = 0
     let countdown = 10
@@ -101,6 +104,7 @@
         }
 
         if (score > highscore.score) {
+          audio.play()
           highscore.score = score
           highscore.name = prompt('最高分! 請輸入名字')
           if (highscore.name === null || highscore.name.length === 0) {
