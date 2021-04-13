@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://unpkg.com/nes.css@latest/css/nes.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link href="./NES.css-2.3.0/NES.css-2.3.0/docs/style.css" rel="stylesheet" />
+    <script src="./NES.css-2.3.0/NES.css-2.3.0/docs/lib/vue.min.js"></script>
+    <style>
+        body {
+            width: 100%;
+            height: 100%;
+            background: rgb(119, 112, 112);
+            position: relative;
+        }
+
+        .holes {
+            background: white;
+        }
+
+        .red {
+            background: red;
+
+        }
+
+        .blue {
+            background: blue;
+        }
+
+        #game {
+            cursor: zoom-in
+        }
+
+        .container {
+            width: 600px;
+            height: 700px;
+            background: white;
+            position: absolute;
+            left: 30%;
+
+
+        }
+
+        .nes-table {
+            background: white;
+            width: 400px;
+            height: 400px;
+            position: absolute;
+            left: 15%;
+            top: 32%;
+
+        }
+
+        .nes-btn {
+            position: absolute;
+            left: 83%;
+            top: 92%;
+            width: 80px;
+            height: 40px;
+            text-align: center;
+            line-height: 20px;
+            font-size: 12px;
+        }
+
+        .nes-progress {
+            width: 50%;
+            height: 20px;
+            z-index: 0;
+        }
+
+        #comHp {
+            position: absolute;
+            left: 24.5%;
+            top: 2%;
+        }
+
+        .com-hp {
+            position: absolute;
+            left: 40%;
+            top: 3%;
+            font-size: 12px;
+        }
+
+        #playerHp {
+            position: absolute;
+            left: 24.5%;
+            top: 93%;
+        }
+
+        .player-hp {
+            position: absolute;
+            left: 40%;
+            top: 94%;
+            font-size: 12px;
+        }
+
+        .com {
+            width: 500px;
+            height: 150px;
+            position: absolute;
+            left: 5%;
+            top: 8%;
+
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <img class="com" src="./images/unnamed.png">
+        <!-- 血條 -->
+        <progress class="nes-progress is-error" value="100" max="100" id="comHp"></progress>
+        <progress class="nes-progress is-warning" value="100" max="100" id="playerHp"></progress>
+        <!-- 時間和hp數值 -->
+        <span class="lastTime" id="text-countdown">Time:-</span>
+        <span class="com-hp" id="text-comHp">HP:-</span>
+        <span class="player-hp" id="text-playerHp">HP:-</span>
+        <!-- 開始按鈕 -->
+        <button type="button" class="nes-btn is-primary" id="btn-start">Start</button>
+        <table class="nes-table is-bordered is-centered" id="game">
+
+            <tr>
+                <td class="holes" id="hole7"></td>
+                <td class="holes" id="hole8"></td>
+                <td class="holes" id="hole9"></td>
+            </tr>
+            <tr>
+                <td class="holes" id="hole4"></td>
+                <td class="holes" id="hole5"></td>
+                <td class="holes" id="hole6"></td>
+            </tr>
+            <tr>
+                <td class="holes" id="hole1"></td>
+                <td class="holes" id="hole2"></td>
+                <td class="holes" id="hole3"></td>
+            </tr>
+
+        </table>
+    </div>
+
+    <script>
+        const holes = document.getElementsByClassName('holes')
+        const comHp = document.getElementById('comHp')
+        const playerHp = document.getElementById('playerHp')
+        const textCountdown = document.getElementById('text-countdown')
+        const textComHp = document.getElementById('text-comHp')
+        const textPlayerHp = document.getElementById('text-playerHp')
+        const btnStart = document.getElementById('btn-start')
+
+        let com = 100
+        let player = 100
+        let timer = 0
+        let countdown = 10
+
+
+        btnStart.onclick = () => {
+
+            btnStart.disabled = true
+
+            com = 100
+            textComHp.innerText = `HP:${com}/100`
+            comHp.value = com
+
+            player = 100
+            textPlayerHp.innerText = `HP:${player}/100`
+            playerHp.value = player
+
+            countdown = 10
+            textCountdown.innerText = countdown
+
+            timer = setInterval(game, 1000)
+            game()
+
+        }
+        const game = () => {
+            for (const hole of holes) {
+                hole.classList.remove('red')
+                hole.classList.remove('blue')
+            }
+            for (let i = 0; i < 3; i++) {
+                const random = Math.floor(Math.random() * 9)
+                holes[random].classList.add('red')
+            }
+            // 倒數計時 當倒數秒數小等於0的時候停止
+            countdown--
+            textCountdown.innerText = `Time:${countdown}`
+            if (countdown <= 0 || com <= 0 || player <= 0) {
+                clearInterval(timer)
+                btnStart.disabled = false
+                for (const hole of holes) {
+                    hole.classList.remove('red')
+                    hole.classList.remove('blue')
+                }
+            }
+        }
+
+        for (const hole of holes) {
+            hole.onclick = () => {
+                if (hole.classList.contains('red')) {
+                    hole.classList.replace('red', 'blue')
+                    com -= 10
+                    comHp.value -= 10
+                    textComHp.innerText = `HP:${com}/100`
+
+
+                }
+            }
+        }
+
+
+
+    </script>
+
+
+
+</body>
+
+</html>

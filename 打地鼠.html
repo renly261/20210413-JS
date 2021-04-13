@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .holes {
+            width: 75px;
+            height: 75px;
+            border: 1px solid black;
+            background: white;
+        }
+
+        .red {
+            background: red;
+        }
+
+        .blue {
+            background: blue;
+        }
+
+        #game {
+            /*  50 50讓滑鼠中心對準準心 預設是左上角 要加auto 否則會沒作用 */
+            cursor: url(./cursor_black.png) 50 50, auto;
+        }
+    </style>
+</head>
+
+<body>
+    <table id="game">
+        <tr>
+            <td class="holes" id="hole7"></td>
+            <td class="holes" id="hole8"></td>
+            <td class="holes" id="hole9"></td>
+        </tr>
+        <tr>
+            <td class="holes" id="hole4"></td>
+            <td class="holes" id="hole5"></td>
+            <td class="holes" id="hole6"></td>
+        </tr>
+        <tr>
+            <td class="holes" id="hole1"></td>
+            <td class="holes" id="hole2"></td>
+            <td class="holes" id="hole3"></td>
+        </tr>
+    </table>
+    <input type="button" value="開始遊戲" id="btn-start">
+    <br>
+    還剩<span id="text-countdown">10</span>秒
+    <br>
+    目前分數: <span id="text-score">0</span>
+    <hr>
+    最高紀錄:
+    <br>
+    玩家: <span id="highscore-player">-</span>
+    <br>
+    分數: <span id="highscore-score">-</span>
+    <script>
+        const btnStart = document.getElementById('btn-start')
+        const holes = document.getElementsByClassName('holes')
+        const textScore = document.getElementById('text-score')
+        const textHighscorePlayer = document.getElementById('highscore-player')
+        const textHighscore = document.getElementById('highscore-score')
+        const textCountdown = document.getElementById('text-countdown')
+
+        // 插入音效
+        const audio = new Audio()
+        audio.src = './rihai.mp3'
+
+        let score = 0
+        // clear timeout interval 會一起把變數清掉 設定 let timer = 0 可以解決這問題
+        let timer = 0
+        let countdown = 10
+
+        // JSON key 值和要用的變數一樣可以簡寫 name:name 可以只寫 name
+        let highscore = { name: '', score: 0 }
+
+        // localStorage.getItem 取出儲存在網頁的資料 localStorage 只能存文字
+        const highStorage = JSON.parse(localStorage.getItem('wam'))
+        // 若取出的最高分數資料不是空的
+        if (highStorage !== null) {
+            highscore = highStorage
+            textHighscorePlayer.innerText = highscore.name
+            textHighscore.innerText = highscore.score
+        }
+
+        btnStart.onclick = () => {
+            // 點開始遊戲時開始遊戲按鈕停用
+            btnStart.disabled = true
+
+            // 每次遊戲開始時分數和時間要重置 變數和網頁上的元素都要重置
+            score = 0
+            textScore.innerText = score
+
+            countdown = 10
+            textCountdown.innerText = countdown
+
+            // 因為 setInterval 會在設定的延遲後才跑第一次 所以先寫在 function 中先跑一次才不會有延遲
+            timer = setInterval(game, 1000)
+            game()
+
+        }
+        const game = () => {
+            for (const hole of holes) {
+                hole.classList.remove('red')
+                hole.classList.remove('blue')
+            }
+            for (let i = 0; i < 3; i++) {
+                const random = Math.floor(Math.random() * 9)
+                holes[random].classList.add('red')
+            }
+            // 倒數計時 當倒數秒數小等於0的時候停止
+            countdown--
+            textCountdown.innerText = countdown
+            if (countdown <= 0) {
+                clearInterval(timer)
+                // 倒數結束(遊戲結束)時跳出訊息
+                alert(`你得到 ${score} 分`)
+
+                // 倒數結束(遊戲結束)時 開始遊戲的按鈕重新變成可以按
+                btnStart.disabled = false
+
+                // 倒數結束(遊戲結束)時 清除所有空格中的顏色(css)
+                for (const hole of holes) {
+                    hole.classList.remove('red')
+                    hole.classList.remove('blue')
+                }
+
+                // 若目前分數>最高分數
+                if (score > highscore.score) {
+                    // 撥放音效
+                    audio.play()
+                    // 改掉分數和使用者名稱(變數)
+                    highscore.score = score
+                    highscore.name = prompt('最高分! 請輸入名字')
+                    if (highscore.name === null || highscore.name.length === 0) {
+                        highscore.name = '路人'
+                    }
+                    // 改掉分數和使用者名稱(網頁上的元素)
+                    textHighscorePlayer.innerText = highscore.name
+                    textHighscore.innerText = highscore.score
+
+                    // 將最高分的紀錄存進網頁 localStorage.setItem(存 wam 的資料在網頁中 關機後不會消失) value 必須是文字
+                    localStorage.setItem('wam', JSON.stringify(highscore))
+                }
+
+            }
+
+        }
+        for (const hole of holes) {
+            hole.onclick = () => {
+                if (hole.classList.contains('red')) {
+                    hole.classList.replace('red', 'blue')
+
+                    score++
+                    textScore.innerText = score
+                }
+            }
+        }
+        // https://keycode.info/ 
+        document.onkeydown = (event) => {
+            // 檢查 event.key 是否為數字(使用者是否是按數字鍵) 且 event.code 有沒有Numpad(使用者是否是按右邊九宮格的數字鍵)
+            if (!isNaN(event.key) && event.code.includes('Numpad')) {
+                const target = document.getElementById(`hole${event.key}`)
+                if (target !== null && target.classList.contains('red')) {
+                    target.classList.replace('red', 'blue')
+                    score++
+                    textScore.innerText = score
+                }
+            }
+        }
+
+    </script>
+</body>
+
+</html>
