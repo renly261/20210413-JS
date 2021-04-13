@@ -86,6 +86,17 @@
         }
       }
     }
+
+    document.onkeydown = (event) => {
+      if (!isNaN(event.key) && event.code.includes('Numpad')) {
+        const target = document.getElementById(`hole${event.key}`)
+        if (target !== null && target.classList.contains('red')) {
+          target.classList.replace('red', 'blue')
+          score++
+          textScore.innerText = score
+        }
+      }
+    }
   </script>
 </body>
 </html>
