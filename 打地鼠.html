@@ -64,7 +64,10 @@
     btnStart.onclick = () => {
       btnStart.disabled = true
       score = 0
+      textScore.innerText = score
+
       countdown = 10
+      textCountdown.innerText = countdown
 
       timer = setInterval(game, 1000)
       game()
