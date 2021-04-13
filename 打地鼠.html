@@ -12,6 +12,9 @@
       border: 1px solid black;
       background: white;
     }
+    .red {
+      background: red;
+    }
   </style>
 </head>
 <body>
@@ -47,6 +50,28 @@
     const textScore = document.getElementById('text-score')
     const textHighscorePlayer = document.getElementById('highscore-player')
     const textHighscore = document.getElementById('highscore-score')
+
+    let score = 0
+    let timer = 0
+
+    btnStart.onclick = () => {
+      btnStart.disabled = true
+      score = 0
+
+      timer = setInterval(game, 1000)
+      game()
+    }
+
+    const game = () => {
+      for (const hole of holes) {
+        hole.classList.remove('red')
+        hole.classList.remove('blue')
+      }
+      for(let i=0;i<3;i++) {
+        const random = Math.floor(Math.random()*9)
+        holes[random].classList.add('red')
+      }
+    }
   </script>
 </body>
 </html>
