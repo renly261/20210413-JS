@@ -60,6 +60,13 @@
     let score = 0
     let timer = 0
     let countdown = 10
+    let highscore = { name:'', score: 0 }
+    const highStorage = JSON.parse(localStorage.getItem('wam'))
+    if (highStorage !== null) {
+      highscore = highStorage
+      textHighscorePlayer.innerText = highscore.name
+      textHighscore.innerText = highscore.score
+    }
 
     btnStart.onclick = () => {
       btnStart.disabled = true
@@ -93,12 +100,16 @@
           hole.classList.remove('blue')
         }
 
-        let name = prompt('最高分! 請輸入名字')
-        if (name === null || name.length === 0) {
-          name = '路人'
+        if (score > highscore.score) {
+          highscore.score = score
+          highscore.name = prompt('最高分! 請輸入名字')
+          if (highscore.name === null || highscore.name.length === 0) {
+            highscore.name = '路人'
+          }
+          textHighscorePlayer.innerText = highscore.name
+          textHighscore.innerText = highscore.score
+          localStorage.setItem('wam', JSON.stringify(highscore))
         }
-        const highscore = { name, score }
-        localStorage.setItem('wam', JSON.stringify(highscore))
       }
     }
 
