@@ -92,6 +92,13 @@
           hole.classList.remove('red')
           hole.classList.remove('blue')
         }
+
+        let name = prompt('最高分! 請輸入名字')
+        if (name === null || name.length === 0) {
+          name = '路人'
+        }
+        const highscore = { name, score }
+        localStorage.setItem('wam', JSON.stringify(highscore))
       }
     }
 
