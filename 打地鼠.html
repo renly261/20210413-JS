@@ -15,6 +15,9 @@
     .red {
       background: red;
     }
+    .blue {
+      background: blue;
+    }
   </style>
 </head>
 <body>
@@ -70,6 +73,17 @@
       for(let i=0;i<3;i++) {
         const random = Math.floor(Math.random()*9)
         holes[random].classList.add('red')
+      }
+    }
+
+    for (const hole of holes) {
+      hole.onclick = () => {
+        if (hole.classList.contains('red')) {
+          hole.classList.replace('red', 'blue')
+
+          score++
+          textScore.innerText = score
+        }
       }
     }
   </script>
