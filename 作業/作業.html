@@ -23,8 +23,10 @@
         }
 
         .red {
-            background: red;
-
+            background: url(./images/leg1.png ) no-repeat;
+            background-position: center center;
+            background-size: cover;
+            animation: backInUp 1s 1;
         }
 
         .blue {
@@ -32,7 +34,13 @@
         }
 
         #game {
-            cursor: zoom-in
+            background: white;
+            width: 400px;
+            height: 400px;
+            position: absolute;
+            left: 15%;
+            top: 32%;
+            cursor: url(./images/sword.png) 50 50, auto;
         }
 
         .container {
@@ -41,18 +49,6 @@
             background: white;
             position: absolute;
             left: 30%;
-
-
-        }
-
-        .nes-table {
-            background: white;
-            width: 400px;
-            height: 400px;
-            position: absolute;
-            left: 15%;
-            top: 32%;
-
         }
 
         .nes-btn {
@@ -104,6 +100,7 @@
             position: absolute;
             left: 5%;
             top: 8%;
+            animation: rubberBand 5s infinite;
 
         }
     </style>
@@ -111,6 +108,7 @@
 
 <body>
     <div class="container">
+        <!-- 怪物圖片 -->
         <img class="com" src="./images/unnamed.png">
         <!-- 血條 -->
         <progress class="nes-progress is-error" value="100" max="100" id="comHp"></progress>
@@ -121,7 +119,8 @@
         <span class="player-hp" id="text-playerHp">HP:-</span>
         <!-- 開始按鈕 -->
         <button type="button" class="nes-btn is-primary" id="btn-start">Start</button>
-        <table class="nes-table is-bordered is-centered" id="game">
+        <!-- 遊戲 -->
+        <table id="game">
 
             <tr>
                 <td class="holes" id="hole7"></td>
@@ -185,18 +184,19 @@
                 const random = Math.floor(Math.random() * 9)
                 holes[random].classList.add('red')
             }
-            // 倒數計時 當倒數秒數小等於0的時候停止
-            countdown--
-            textCountdown.innerText = `Time:${countdown}`
-            if (countdown <= 0 || com <= 0 || player <= 0) {
-                clearInterval(timer)
-                btnStart.disabled = false
-                for (const hole of holes) {
-                    hole.classList.remove('red')
-                    hole.classList.remove('blue')
-                }
+        }
+        // 倒數計時 當倒數秒數小等於0的時候停止
+        countdown--
+        textCountdown.innerText = `Time:${countdown}`
+        if (countdown <= 0 || com <= 0 || player <= 0) {
+            clearInterval(timer)
+            btnStart.disabled = false
+            for (const hole of holes) {
+                hole.classList.remove('red')
+                hole.classList.remove('blue')
             }
         }
+
 
         for (const hole of holes) {
             hole.onclick = () => {
