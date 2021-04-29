@@ -7,57 +7,126 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
-        .holes {
-            width: 75px;
-            height: 75px;
-            border: 1px solid black;
-            background: white;
+        html,
+        body {
+            height: 100%;
         }
 
-        .red {
-            background: red;
+        body {
+            font-weight: normal;
+            font-style: normal;
+            margin: 0;
+            padding: 0;
+            border: 0;
+            font-size: 100%;
+            vertical-align: baseline;
         }
 
-        .blue {
-            background: blue;
+        .container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background: url(./images/back.jpg);
+            background-position: center center;
+            background-size: cover;
+            color: white;
         }
 
         #game {
             /*  50 50讓滑鼠中心對準準心 預設是左上角 要加auto 否則會沒作用 */
             cursor: url(./cursor_black.png) 50 50, auto;
+
+            position: absolute;
+            left: 35%;
+            top: 30%;
+        }
+
+        .holes {
+            width: 100px;
+            height: 100px;
+            /* 玻璃擬態 */
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border-radius: 10px;
+            border: 5px solid rgba(255, 255, 255, 0.7);
+
+            /* 浮起來的效果 */
+            -webkit-transition: all 250ms cubic-bezier(0.02, 0.01, 0.47, 1);
+            transition: all 250ms cubic-bezier(.02, .01, .47, 1);
+        }
+
+        .holes:hover {
+            width: 75px;
+            height: 75px;
+            border: 5px solid rgba(255, 255, 255, 0.4);
+            /* 浮起來的效果 */
+            transform: translate(0, -5px);
+            transition-delay: 0s;
+        }
+
+        .red {
+            background: url(./images/sword.png);
+            filter: blur(0.8px);
+
+        }
+
+        .red:hover {
+            background: url(./images/sword.png);
+            filter: blur(0px);
+        }
+
+        .blue {
+            background: blue;
         }
     </style>
 </head>
 
 <body>
-    <table id="game">
-        <tr>
-            <td class="holes" id="hole7"></td>
-            <td class="holes" id="hole8"></td>
-            <td class="holes" id="hole9"></td>
-        </tr>
-        <tr>
-            <td class="holes" id="hole4"></td>
-            <td class="holes" id="hole5"></td>
-            <td class="holes" id="hole6"></td>
-        </tr>
-        <tr>
-            <td class="holes" id="hole1"></td>
-            <td class="holes" id="hole2"></td>
-            <td class="holes" id="hole3"></td>
-        </tr>
-    </table>
-    <input type="button" value="開始遊戲" id="btn-start">
-    <br>
-    還剩<span id="text-countdown">10</span>秒
-    <br>
-    目前分數: <span id="text-score">0</span>
-    <hr>
-    最高紀錄:
-    <br>
-    玩家: <span id="highscore-player">-</span>
-    <br>
-    分數: <span id="highscore-score">-</span>
+    <div class="container">
+        <table id="game">
+            <tr>
+                <td class="holes" id="hole13"></td>
+                <td class="holes" id="hole14"></td>
+                <td class="holes" id="hole15"></td>
+                <td class="holes" id="hole16"></td>
+            </tr>
+            <tr>
+                <td class="holes" id="hole9"></td>
+                <td class="holes" id="hole10"></td>
+                <td class="holes" id="hole11"></td>
+                <td class="holes" id="hole12"></td>
+            </tr>
+            <tr>
+                <td class="holes" id="hole5"></td>
+                <td class="holes" id="hole6"></td>
+                <td class="holes" id="hole7"></td>
+                <td class="holes" id="hole8"></td>
+            </tr>
+            <tr>
+                <td class="holes" id="hole1"></td>
+                <td class="holes" id="hole2"></td>
+                <td class="holes" id="hole3"></td>
+                <td class="holes" id="hole4"></td>
+            </tr>
+        </table>
+
+        <input type="button" value="開始遊戲" id="btn-start">
+        <br>
+        還剩<span id="text-countdown">-</span>秒
+        <br>
+        目前分數: <span id="text-score">-</span>
+        <br>
+        <br>
+        最高紀錄:
+        <br>
+        玩家: <span id="highscore-player">-</span>
+        <br>
+        分數: <span id="highscore-score">-</span>
+    </div>
+
+
     <script>
         const btnStart = document.getElementById('btn-start')
         const holes = document.getElementsByClassName('holes')
@@ -73,7 +142,8 @@
         let score = 0
         // clear timeout interval 會一起把變數清掉 設定 let timer = 0 可以解決這問題
         let timer = 0
-        let countdown = 10
+
+        let countdown = 31
 
         // JSON key 值和要用的變數一樣可以簡寫 name:name 可以只寫 name
         let highscore = { name: '', score: 0 }
@@ -87,40 +157,52 @@
             textHighscore.innerText = highscore.score
         }
 
+        // 點擊開始遊戲要做的事--------------------------------------------------------------------------------------
         btnStart.onclick = () => {
-            // 點開始遊戲時開始遊戲按鈕停用
+            // 開始遊戲按鈕停用
             btnStart.disabled = true
 
             // 每次遊戲開始時分數和時間要重置 變數和網頁上的元素都要重置
             score = 0
             textScore.innerText = score
 
-            countdown = 10
+            countdown = 31
             textCountdown.innerText = countdown
 
             // 因為 setInterval 會在設定的延遲後才跑第一次 所以先寫在 function 中先跑一次才不會有延遲
             timer = setInterval(game, 1000)
-            game()
 
+            // 呼叫 function
+            game()
         }
+
+        // 開始遊戲後要重複做的事包成 function ******************************************************************************
         const game = () => {
+            // 遊戲開始時先清除格子裡的顏色
             for (const hole of holes) {
                 hole.classList.remove('red')
                 hole.classList.remove('blue')
             }
-            for (let i = 0; i < 3; i++) {
-                const random = Math.floor(Math.random() * 9)
-                holes[random].classList.add('red')
-            }
-            // 倒數計時 當倒數秒數小等於0的時候停止
+
+            // 倒數計時 改剩餘時間
             countdown--
             textCountdown.innerText = countdown
+
+            // 跑迴圈 隨機在編號 1~16 的格子中生成紅色 
+            for (let i = 0; i < 3; i++) {
+                const random = Math.floor(Math.random() * 16)
+                holes[random].classList.add('red')
+
+            }
+            // 時間到 遊戲結束要做的事----------------------------------------------------------------------------------
             if (countdown <= 0) {
+                // 停止計時
                 clearInterval(timer)
+
                 // 倒數結束(遊戲結束)時跳出訊息
                 alert(`你得到 ${score} 分`)
 
-                // 倒數結束(遊戲結束)時 開始遊戲的按鈕重新變成可以按
+                // 開放開始遊戲按鈕
                 btnStart.disabled = false
 
                 // 倒數結束(遊戲結束)時 清除所有空格中的顏色(css)
@@ -146,21 +228,23 @@
                     // 將最高分的紀錄存進網頁 localStorage.setItem(存 wam 的資料在網頁中 關機後不會消失) value 必須是文字
                     localStorage.setItem('wam', JSON.stringify(highscore))
                 }
-
             }
-
         }
+        // 開始遊戲後要重複做的事包成 function ******************************************************************************
+
+        // 點擊到紅色加一分 並替換紅色成藍色-------------------------------------------------------------------------------
         for (const hole of holes) {
             hole.onclick = () => {
                 if (hole.classList.contains('red')) {
                     hole.classList.replace('red', 'blue')
-
                     score++
                     textScore.innerText = score
                 }
             }
         }
+
         // https://keycode.info/ 
+        // 偵測鍵盤按鍵的編號 來對應遊戲要按的按鍵
         document.onkeydown = (event) => {
             // 檢查 event.key 是否為數字(使用者是否是按數字鍵) 且 event.code 有沒有Numpad(使用者是否是按右邊九宮格的數字鍵)
             if (!isNaN(event.key) && event.code.includes('Numpad')) {

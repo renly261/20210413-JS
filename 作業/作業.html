@@ -6,10 +6,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+
     <link href="https://unpkg.com/nes.css@latest/css/nes.min.css" rel="stylesheet" />
+    <!-- animate.css -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
-    <link href="./NES.css-2.3.0/NES.css-2.3.0/docs/style.css" rel="stylesheet" />
-    <script src="./NES.css-2.3.0/NES.css-2.3.0/docs/lib/vue.min.js"></script>
     <style>
         body {
             width: 100%;
@@ -25,8 +25,8 @@
         .red {
             background: url(./images/leg1.png ) no-repeat;
             background-position: center center;
-            background-size: cover;
-            animation: backInUp 1s 1;
+            background-size: auto;
+            /* animation: slideInUp 1s 1 ease-in-out; */
         }
 
         .blue {
@@ -100,7 +100,7 @@
             position: absolute;
             left: 5%;
             top: 8%;
-            animation: rubberBand 5s infinite;
+            /* animation: rubberBand 5s infinite; */
 
         }
     </style>
@@ -110,15 +110,19 @@
     <div class="container">
         <!-- 怪物圖片 -->
         <img class="com" src="./images/unnamed.png">
+
         <!-- 血條 -->
         <progress class="nes-progress is-error" value="100" max="100" id="comHp"></progress>
         <progress class="nes-progress is-warning" value="100" max="100" id="playerHp"></progress>
+
         <!-- 時間和hp數值 -->
-        <span class="lastTime" id="text-countdown">Time:-</span>
+        <span id="text-countdown">Time:-</span>
         <span class="com-hp" id="text-comHp">HP:-</span>
         <span class="player-hp" id="text-playerHp">HP:-</span>
+
         <!-- 開始按鈕 -->
         <button type="button" class="nes-btn is-primary" id="btn-start">Start</button>
+
         <!-- 遊戲 -->
         <table id="game">
 
@@ -142,24 +146,45 @@
     </div>
 
     <script>
+        // 九宮格
         const holes = document.getElementsByClassName('holes')
+
+        // 電腦血量條
         const comHp = document.getElementById('comHp')
+
+        // 玩家血量條
         const playerHp = document.getElementById('playerHp')
-        const textCountdown = document.getElementById('text-countdown')
+
+        // 電腦血量數值
         const textComHp = document.getElementById('text-comHp')
+
+        // 玩家血量數值
         const textPlayerHp = document.getElementById('text-playerHp')
+
+        // 倒數計時
+        const textCountdown = document.getElementById('text-countdown')
+
+        // 開始遊戲按鈕
         const btnStart = document.getElementById('btn-start')
 
+        // 電腦血量預設值
         let com = 100
+
+        // 玩家血量預設值
         let player = 100
+
+        // 倒數計時
         let timer = 0
+
+        // 從10開始倒數
         let countdown = 10
 
-
+        // 點擊遊戲開始時觸發的事件
         btnStart.onclick = () => {
-
+            // 點擊遊戲開始後 按鈕即關閉不能點
             btnStart.disabled = true
 
+            // 每一次點擊遊戲開始 讓所有數值回到初始值
             com = 100
             textComHp.innerText = `HP:${com}/100`
             comHp.value = com
@@ -171,52 +196,54 @@
             countdown = 10
             textCountdown.innerText = countdown
 
+            // 以一秒的速度開始倒數
             timer = setInterval(game, 1000)
             game()
-
         }
+        // 九宮格
         const game = () => {
             for (const hole of holes) {
+                // 剛開始先 清除九宮格裡格子的東西
                 hole.classList.remove('red')
                 hole.classList.remove('blue')
             }
+
+            // 跑迴圈 讓東西在1~9的 hole 裡隨機出現
             for (let i = 0; i < 3; i++) {
                 const random = Math.floor(Math.random() * 9)
                 holes[random].classList.add('red')
             }
-        }
-        // 倒數計時 當倒數秒數小等於0的時候停止
-        countdown--
-        textCountdown.innerText = `Time:${countdown}`
-        if (countdown <= 0 || com <= 0 || player <= 0) {
-            clearInterval(timer)
-            btnStart.disabled = false
-            for (const hole of holes) {
-                hole.classList.remove('red')
-                hole.classList.remove('blue')
-            }
-        }
+            console.log(holes);
 
-
-        for (const hole of holes) {
-            hole.onclick = () => {
-                if (hole.classList.contains('red')) {
-                    hole.classList.replace('red', 'blue')
-                    com -= 10
-                    comHp.value -= 10
-                    textComHp.innerText = `HP:${com}/100`
-
-
+            // 倒數計時 當倒數秒數或玩家或電腦的血量小等於0的時候停止 並修改值
+            countdown--
+            textCountdown.innerText = `Time:${countdown + 1}`
+            if (countdown <= -1 || com <= 0 || player <= 0) {
+                clearInterval(timer)
+                // 倒數結束 開始遊戲按鈕重新開放
+                btnStart.disabled = false
+                // 倒數結束 清除九宮格裡格子的東西
+                for (const hole of holes) {
+                    hole.classList.remove('red')
+                    hole.classList.remove('blue')
                 }
             }
         }
 
-
-
+        // 九宮格裡的格子
+        for (const hole of holes) {
+            hole.onclick = () => {
+                // 若點到某東西就把某東西替換成另一個東西
+                if (hole.classList.contains('red')) {
+                    hole.classList.replace('red', 'blue')
+                    // 點到某東西時血量增減
+                    com -= 10
+                    comHp.value -= 10
+                    textComHp.innerText = `HP:${com}/100`
+                }
+            }
+        }
     </script>
-
-
-
 </body>
 
 </html>

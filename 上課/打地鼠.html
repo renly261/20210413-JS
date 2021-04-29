@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -12,17 +13,21 @@
       border: 1px solid black;
       background: white;
     }
+
     .red {
       background: red;
     }
+
     .blue {
       background: blue;
     }
+
     #game {
       cursor: url(./cursor_black.png) 50 50, auto;
     }
   </style>
 </head>
+
 <body>
   <table id="game">
     <tr>
@@ -66,7 +71,7 @@
     let score = 0
     let timer = 0
     let countdown = 10
-    let highscore = { name:'', score: 0 }
+    let highscore = { name: '', score: 0 }
     const highStorage = JSON.parse(localStorage.getItem('wam'))
     if (highStorage !== null) {
       highscore = highStorage
@@ -91,8 +96,8 @@
         hole.classList.remove('red')
         hole.classList.remove('blue')
       }
-      for(let i=0;i<3;i++) {
-        const random = Math.floor(Math.random()*9)
+      for (let i = 0; i < 3; i++) {
+        const random = Math.floor(Math.random() * 9)
         holes[random].classList.add('red')
       }
       countdown--
@@ -143,4 +148,5 @@
     }
   </script>
 </body>
+
 </html>

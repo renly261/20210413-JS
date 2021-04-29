@@ -66,6 +66,7 @@
         const textHighscore = document.getElementById('highscore-score')
         const textCountdown = document.getElementById('text-countdown')
 
+        // 插入音效
         const audio = new Audio()
         audio.src = './rihai.mp3'
 
@@ -130,6 +131,7 @@
 
                 // 若目前分數>最高分數
                 if (score > highscore.score) {
+                    // 撥放音效
                     audio.play()
                     // 改掉分數和使用者名稱(變數)
                     highscore.score = score
