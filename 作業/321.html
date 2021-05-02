@@ -41,33 +41,13 @@
 
             position: absolute;
             left: 20%;
-            top: 25%;
+            top: 20%;
             user-select: none;
             -webkit-user-drag: none;
 
             /* 表格間距 水平間距 垂直間距 */
             border-spacing: 50px 0;
 
-        }
-
-        .info {
-            position: fixed;
-        }
-
-        .key {
-            width: 70px;
-            height: 70px;
-            background: white;
-            margin-left: 61.5px;
-            position: relative;
-            top: 10%;
-            left: 19.7%;
-            float: left;
-            color: black;
-            text-align: center;
-            line-height: 70px;
-            font-size: 50px;
-            border-radius: 10px;
         }
 
         /* 譜面 */
@@ -90,9 +70,9 @@
         }
 
         .holes:hover {
-            filter: drop-shadow(16px 16px 20px yellow) invert(100%);
+            filter: drop-shadow(16px 16px 20px red) invert(75%);
             transform: translate(0, -5px);
-            border: 5px solid rgba(255, 255, 255, 1);
+            border: 5px solid rgba(255, 255, 255, 0.4);
         }
 
         /* 音符 */
@@ -105,8 +85,9 @@
             position: absolute;
             top: 0%;
             left: 18%;
-            animation: animation 3s 1 linear normal;
+            animation: animation 3s 1 linear;
             cursor: pointer;
+            opacity: 0;
         }
 
         .block:hover {
@@ -123,8 +104,8 @@
             position: absolute;
             top: 83%;
             left: 25%;
-            animation: animation1 0.5s 1 linear normal;
-
+            animation: animation1 0.5s 1 linear;
+            opacity: 0;
         }
 
         /* 譜面中的線 */
@@ -154,11 +135,12 @@
         @keyframes animation {
             from {
                 top: 0%;
-
+                opacity: 1
             }
 
             to {
                 top: 100%;
+                opacity: 1
             }
         }
 
@@ -166,7 +148,7 @@
         @keyframes animation1 {
             from {
                 transform: rotate(45deg);
-
+                opacity: 0.3
             }
 
             to {
@@ -183,32 +165,27 @@
     <div class="container">
         <table id="game">
             <tr>
-                <div class="key">A</div>
                 <td class="holes" id="hole-a">
                     <div class="line"></div>
                     <div class="press"></div>
+
                 </td>
-                <div class="key">S</div>
                 <td class="holes" id="hole-s">
                     <div class="line"></div>
                     <div class="press"></div>
                 </td>
-                <div class="key">D</div>
                 <td class="holes" id="hole-d">
                     <div class="line"></div>
                     <div class="press"></div>
                 </td>
-                <div class="key">J</div>
                 <td class="holes" id="hole-j">
                     <div class="line"></div>
                     <div class="press"></div>
                 </td>
-                <div class="key">K</div>
                 <td class="holes" id="hole-k">
                     <div class="line"></div>
                     <div class="press"></div>
                 </td>
-                <div class="key">L</div>
                 <td class="holes" id="hole-l">
                     <div class="line"></div>
                     <div class="press"></div>
@@ -216,23 +193,22 @@
             </tr>
         </table>
 
-        <div class="info">
-            <input type="button" value="開始遊戲" id="btn-start">
-            <br>
-            還剩<span id="text-countdown">-</span>秒
-            <br>
-            目前分數: <span id="text-score">-</span>
-            <br>
-            <br>
-            最高紀錄:
-            <br>
-            玩家: <span id="highscore-player">-</span>
-            <br>
-            分數: <span id="highscore-score">-</span>
-        </div>
+        <input type="button" value="開始遊戲" id="btn-start">
+        <br>
+        還剩<span id="text-countdown">-</span>秒
+        <br>
+        目前分數: <span id="text-score">-</span>
+        <br>
+        <br>
+        最高紀錄:
+        <br>
+        玩家: <span id="highscore-player">-</span>
+        <br>
+        分數: <span id="highscore-score">-</span>
+    </div>
+
     </div>
     <script>
-
         const btnStart = document.getElementById('btn-start')
         const holes = document.getElementsByClassName('holes')
         const textScore = document.getElementById('text-score')
@@ -241,6 +217,8 @@
         const textCountdown = document.getElementById('text-countdown')
         const block = document.getElementsByClassName('block')
         const block1 = document.getElementsByClassName('block1')
+
+
 
         // 插入音效
         const audio = new Audio()
@@ -276,6 +254,7 @@
             countdown = 30
             textCountdown.innerText = countdown
 
+
             // 因為 setInterval 會在設定的延遲後才跑第一次 所以先寫在 function 中先跑一次才不會有延遲
             timer = setInterval(game, 1000)
 
@@ -284,8 +263,7 @@
         }
 
         // 開始遊戲後要重複做的事包成 function ******************************************************************************
-        const game = (event) => {
-
+        const game = () => {
             // 遊戲開始時先清除格子裡的音符
             for (const hole of holes) {
                 hole.classList.remove('block')
@@ -297,11 +275,10 @@
             textCountdown.innerText = countdown
 
             // 跑迴圈 隨機在編號 1~6 的譜面中生成音符 
-            for (let i = 0; i < 2; i++) {
+            for (let i = 0; i < 1; i++) {
                 const random = Math.floor(Math.random() * 6)
                 holes[random].insertAdjacentHTML('beforeend', '<div class="block"></div>')
             }
-
             // 時間到 遊戲結束要做的事----------------------------------------------------------------------------------
             if (countdown <= 0) {
                 // 清除格子裡的音符
@@ -317,6 +294,8 @@
 
                 // 開放開始遊戲按鈕
                 btnStart.disabled = false
+
+
 
                 // 若目前分數>最高分數
                 if (score > highscore.score) {
@@ -342,13 +321,8 @@
         // 點擊到紅色加一分 並替換紅色成藍色-------------------------------------------------------------------------------
         for (const hole of holes) {
             hole.onclick = (event) => {
-                console.log(event.target.className);
-                let hei = event.pageY
-                if (event.target.className == 'block') {
-                    hole.querySelector(".block").remove()
-                }
-
-                if (event.target.classList.contains('block') && hei > 580 && hei < 650) {
+                console.log(event.target);
+                if (event.target.classList.contains('block')) {
                     event.target.classList.replace('block', 'block1')
                     score++
                     textScore.innerText = score
@@ -358,16 +332,18 @@
 
         // https://keycode.info/ 
         document.onkeydown = (event) => {
-            console.log(event);
+            // 檢查 event.key 是否為數字(使用者是否是按數字鍵) 且 event.code 有沒有Numpad(使用者是否是按右邊九宮格的數字鍵)
             if (event.code.includes('Key')) {
                 const target = document.getElementById(`hole-${event.key}`)
-                if (target !== null && target.querySelector(".block").classList.contains('block')) {
-                    target.querySelector(".block").classList.replace('block', 'block1')
+                console.log(target.lastElementChild);
+                if (target !== null && target.lastElementChild.classList.contains('block')) {
+                    target.lastElementChild.classList.replace('block', 'block1')
                     score++
                     textScore.innerText = score
                 }
             }
         }
+
 
     </script>
 </body>
