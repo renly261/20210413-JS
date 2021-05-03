@@ -86,7 +86,6 @@
             -webkit-transition: all 250ms cubic-bezier(0.02, 0.01, 0.47, 1);
             transition: all 250ms cubic-bezier(.02, .01, .47, 1);
             -webkit-box-reflect: below -75px linear-gradient(transparent, rgba(0, 0, 0, 0.5));
-
         }
 
         .holes:hover {
@@ -239,8 +238,7 @@
         const textHighscorePlayer = document.getElementById('highscore-player')
         const textHighscore = document.getElementById('highscore-score')
         const textCountdown = document.getElementById('text-countdown')
-        const block = document.getElementsByClassName('block')
-        const block1 = document.getElementsByClassName('block1')
+
 
         // 插入音效
         const audio = new Audio()
@@ -266,6 +264,7 @@
 
         // 點擊開始遊戲要做的事--------------------------------------------------------------------------------------
         btnStart.onclick = () => {
+
             // 開始遊戲按鈕停用
             btnStart.disabled = true
 
@@ -285,11 +284,12 @@
 
         // 開始遊戲後要重複做的事包成 function ******************************************************************************
         const game = (event) => {
-
+            const block = document.getElementsByClassName('block')
+            const block1 = document.getElementsByClassName('block1')
             // 遊戲開始時先清除格子裡的音符
             for (const hole of holes) {
-                hole.classList.remove('block')
-                hole.classList.remove('blcok1')
+                block.remove()
+                block1.remove()
             }
 
             // 倒數計時 改剩餘時間
@@ -297,9 +297,17 @@
             textCountdown.innerText = countdown
 
             // 跑迴圈 隨機在編號 1~6 的譜面中生成音符 
-            for (let i = 0; i < 2; i++) {
+            for (let i = 0; i < 1; i++) {
                 const random = Math.floor(Math.random() * 6)
-                holes[random].insertAdjacentHTML('beforeend', '<div class="block"></div>')
+
+                const block = document.createElement('div')
+                block.classList.add('block')
+                holes[random].appendChild(block)
+                setTimeout(() => {
+                    if (!block.classList.contains('block1')) {
+                        block.remove()
+                    }
+                }, 3000);
             }
 
             // 時間到 遊戲結束要做的事----------------------------------------------------------------------------------
@@ -342,29 +350,34 @@
         // 點擊到紅色加一分 並替換紅色成藍色-------------------------------------------------------------------------------
         for (const hole of holes) {
             hole.onclick = (event) => {
-                console.log(event.target.className);
-                let hei = event.pageY
-                if (event.target.className == 'block') {
-                    hole.querySelector(".block").remove()
-                }
 
-                if (event.target.classList.contains('block') && hei > 580 && hei < 650) {
+                let hei = event.pageY
+                console.log(event.target.className);
+                console.log(hei);
+                if (event.target.classList.contains('block') && hei > 580 && hei < 660) {
                     event.target.classList.replace('block', 'block1')
                     score++
                     textScore.innerText = score
+                    setTimeout(() => {
+                        event.target.remove()
+                    }, 500)
                 }
+
             }
         }
 
         // https://keycode.info/ 
         document.onkeydown = (event) => {
-            console.log(event);
             if (event.code.includes('Key')) {
                 const target = document.getElementById(`hole-${event.key}`)
-                if (target !== null && target.querySelector(".block").classList.contains('block')) {
+                let hei1 = target.querySelector(".block").offsetTop;
+                if (target !== null && target.querySelector(".block").classList.contains('block') && hei1 > 350 && hei1 < 450) {
                     target.querySelector(".block").classList.replace('block', 'block1')
                     score++
                     textScore.innerText = score
+                    setTimeout(() => {
+                        target.querySelector(".block1").remove()
+                    }, 500)
                 }
             }
         }
